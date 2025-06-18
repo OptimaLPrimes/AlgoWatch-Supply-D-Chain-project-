@@ -4,6 +4,7 @@ import { RiskPredictionForm } from "@/components/alerts/risk-prediction-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { AlertTriangle, BellRing, ThermometerSnowflake } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export default function AlertsPage() {
   // Mock data for active alerts - in a real app, this would come from a backend/state
