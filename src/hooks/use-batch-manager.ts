@@ -9,7 +9,7 @@ const LOCAL_STORAGE_KEY = "chainwatch_batches";
 
 // Helper to get batches from localStorage
 const getStoredBatches = (): Batch[] => {
-  if (typeof window === "undefined") return initialMockBatches; // Should ideally not be hit in client components
+  if (typeof window === "undefined") return initialMockBatches; 
   try {
     const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (stored) {
@@ -48,35 +48,28 @@ interface BatchRegistrationFormValues {
 
 
 export function useBatchManager() {
-  const [batches, setBatchesState] = React.useState<Batch[]>([]);
+  // Initialize state synchronously from localStorage
+  const [batches, setBatchesState] = React.useState<Batch[]>(() => getStoredBatches());
 
-  React.useEffect(() => {
-    // Load batches from localStorage on initial mount
-    setBatchesState(getStoredBatches());
-  }, []);
-
+  // Removed useEffect for initial loading as it's now handled by useState initializer
 
   const addBatch = React.useCallback((formData: BatchRegistrationFormValues) => {
     const newBatchId = formData.batchId || `BATCH${Date.now().toString().slice(-6)}`;
     
-    // Simplified attachment handling for now
-    // In a real app, FileList would be processed (e.g., uploaded, URLs stored)
     const processedAttachments: FileAttachment[] = [];
     if (formData.attachments) {
       if (formData.attachments instanceof FileList) {
-        // Placeholder: In real app, upload files and get URLs
-        // For now, just storing names and a placeholder URL
         for (let i = 0; i < formData.attachments.length; i++) {
           const file = formData.attachments[i];
           processedAttachments.push({
             name: file.name,
-            url: "#placeholder_url", // Placeholder
+            url: URL.createObjectURL(file), // Create a temporary local URL for display
             type: file.type.startsWith("image/") ? "image" : "other",
           });
         }
       } else {
-        // Assuming it's already FileAttachment[] if not FileList
-        // This branch might not be hit with current form setup
+        // This case handles if attachments are already in FileAttachment[] format, though unlikely from the form
+         processedAttachments.push(...(formData.attachments as FileAttachment[]));
       }
     }
 
@@ -125,6 +118,15 @@ export function useBatchManager() {
   const deleteBatch = React.useCallback((batchId: string) => {
     setBatchesState(prevBatches => {
       const updatedBatches = prevBatches.filter(b => b.id !== batchId);
+      // Revoke Object URLs for attachments of the deleted batch to prevent memory leaks
+      const batchToDelete = prevBatches.find(b => b.id === batchId);
+      if (batchToDelete?.attachments) {
+        batchToDelete.attachments.forEach(att => {
+          if (att.url.startsWith('blob:')) {
+            URL.revokeObjectURL(att.url);
+          }
+        });
+      }
       storeBatches(updatedBatches);
       return updatedBatches;
     });
@@ -133,7 +135,7 @@ export function useBatchManager() {
   const updateBatch = React.useCallback((updatedBatch: Batch) => {
     setBatchesState(prevBatches => {
       const batchIndex = prevBatches.findIndex(b => b.id === updatedBatch.id);
-      if (batchIndex === -1) return prevBatches; // Should not happen if used correctly
+      if (batchIndex === -1) return prevBatches;
 
       const newBatches = [...prevBatches];
       newBatches[batchIndex] = updatedBatch;
@@ -141,6 +143,21 @@ export function useBatchManager() {
       return newBatches;
     });
   }, []);
+
+  // Cleanup object URLs on unmount or when batches change significantly (though less critical here)
+  React.useEffect(() => {
+    return () => {
+      batches.forEach(batch => {
+        if (batch.attachments) {
+          batch.attachments.forEach(att => {
+            if (att.url.startsWith('blob:')) {
+              URL.revokeObjectURL(att.url);
+            }
+          });
+        }
+      });
+    };
+  }, [batches]);
 
 
   return { addBatch, getBatches, getBatchById, deleteBatch, updateBatch, batches };
