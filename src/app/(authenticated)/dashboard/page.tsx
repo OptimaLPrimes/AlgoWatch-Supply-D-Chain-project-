@@ -6,7 +6,7 @@ import { PageHeader } from "@/components/shared/page-header";
 import { mockDashboardCards, getIconForStatus } from "@/data/mock-data";
 import type { User, Batch } from "@/types";
 import { getSimulatedUser } from "@/lib/auth";
-import { useBatchManager } from "@/hooks/use-batch-manager"; // Import the hook
+import { useBatchManager } from "@/hooks/use-batch-manager"; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -16,7 +16,7 @@ import { ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
   const [user, setUser] = React.useState<User | null>(null);
-  const { batches } = useBatchManager(); // Use the hook to get all batches
+  const { batches } = useBatchManager(); 
   const [recentBatches, setRecentBatches] = React.useState<Batch[]>([]);
 
   React.useEffect(() => {
@@ -25,10 +25,10 @@ export default function DashboardPage() {
   }, []);
 
   React.useEffect(() => {
-    // Update recent batches when the main batches list changes
+    
     const sortedBatches = [...batches].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
     setRecentBatches(sortedBatches.slice(0, 5));
-  }, [batches]); // Depend on 'batches' from the hook
+  }, [batches]); 
 
   const dashboardCardsData = user ? mockDashboardCards(user.role, batches) : [];
 
@@ -43,7 +43,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <Card className="shadow-lg">
+        <Card className="shadow-xl">
           <CardHeader>
             <CardTitle className="font-headline">Recent Batch Activity</CardTitle>
             <CardDescription>Overview of the latest batch updates.</CardDescription>
@@ -96,7 +96,7 @@ export default function DashboardPage() {
           </CardContent>
         </Card>
         
-        <Card className="shadow-lg">
+        <Card className="shadow-xl">
            <CardHeader>
             <CardTitle className="font-headline">Quick Actions</CardTitle>
             <CardDescription>Common tasks at your fingertips.</CardDescription>
