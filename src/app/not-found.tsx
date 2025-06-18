@@ -16,13 +16,13 @@ export default function NotFound() {
         Let&apos;s get you back on track.
       </p>
       <div className="flex items-center space-x-4">
-         <Link href="/" passHref legacyBehavior>
+         <Link href="/">
           <Button size="lg">
             <Package className="mr-2 h-5 w-5" />
             Go to Login
           </Button>
         </Link>
-        <Link href="/dashboard" passHref legacyBehavior>
+        <Link href="/dashboard">
           <Button variant="outline" size="lg">
             Go to Dashboard
           </Button>
@@ -38,3 +38,4 @@ export default function NotFound() {
     </div>
   );
 }
+

@@ -83,7 +83,7 @@ export function SidebarNav({ user, onLogout }: SidebarNavProps) {
         <SidebarMenu>
           {navItems.map((item) => (
             <SidebarMenuItem key={item.title}>
-              <Link href={item.href} legacyBehavior passHref>
+              <Link href={item.href}>
                 <SidebarMenuButton
                   variant="ghost"
                   className={cn(
@@ -113,3 +113,4 @@ export function SidebarNav({ user, onLogout }: SidebarNavProps) {
     </Sidebar>
   );
 }
+
