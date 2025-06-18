@@ -6,28 +6,11 @@ import { usePathname } from "next/navigation";
 import { LayoutDashboard, PackagePlus, SearchCheck, AlertCircle, Settings, LogOut, UserCircle, Package, Users, BarChart3 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import type { NavItem, User } from "@/types";
-import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarHeader,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarGroup,
-  SidebarGroupLabel,
-  SidebarGroupContent
-} from "@/components/ui/sidebar"; // Assuming this is your custom sidebar component
+// Note: Button, Separator, Avatar are not directly used in the UI of this file anymore
+// but getNavItems is exported and used by the new header.
 
-interface SidebarNavProps {
-  user: User | null;
-  onLogout: () => void;
-}
-
-const getNavItems = (role?: User["role"]): NavItem[] => {
+// This function is EXPORTED and used by the new Navbar (header.tsx)
+export const getNavItems = (role?: User["role"]): NavItem[] => {
   const baseItems: NavItem[] = [
     { title: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { title: "Register Batch", href: "/batches/register", icon: PackagePlus, roles: ["Admin", "Manufacturer"] },
@@ -44,73 +27,67 @@ const getNavItems = (role?: User["role"]): NavItem[] => {
   
   let items = baseItems;
   if (role === "Admin") {
-    items = [...baseItems, ...adminItems];
+    // For Admin, include all base items and admin-specific items.
+    // Ensure Settings is included and potentially distinct if it was meant for all.
+    const allAdminItems = [...baseItems.filter(item => item.href !== "/settings"), ...adminItems];
+    // Deduplicate items by href, giving preference to adminItems if conflicts (e.g. Settings)
+    const itemMap = new Map<string, NavItem>();
+    allAdminItems.forEach(item => itemMap.set(item.href, item));
+    items = Array.from(itemMap.values());
   }
 
-  return items.filter(item => !item.roles || (role && item.roles.includes(role)));
+
+  return items.filter(item => !item.roles || (role && item.roles.includes(role)))
+    .sort((a,b) => { // Optional: maintain a specific order
+        const order = ["/dashboard", "/batches/register", "/batches", "/verify-batch", "/alerts", "/admin/users", "/admin/analytics", "/settings"];
+        return order.indexOf(a.href) - order.indexOf(b.href);
+    });
 };
 
 
-export function SidebarNav({ user, onLogout }: SidebarNavProps) {
+// The rest of this component (SidebarNav UI) is no longer directly used in the main layout.
+// It's kept here as the source of `getNavItems` or could be further refactored into a pure utility file.
+export function SidebarNav({ user, onLogout }: { user: User | null; onLogout: () => void; }) {
   const pathname = usePathname();
   const navItems = getNavItems(user?.role);
 
-  return (
-    <Sidebar className="border-r">
-      <SidebarHeader className="p-4">
-        <Link href="/dashboard" className="flex items-center gap-2">
-          <Package className="h-8 w-8 text-primary" />
-          <h1 className="text-2xl font-headline font-semibold">ChainWatch</h1>
-        </Link>
-      </SidebarHeader>
-      
-      <SidebarContent className="p-2">
-        {user && (
-          <SidebarGroup className="mb-4 p-2 border rounded-md bg-card">
-            <SidebarGroupContent className="flex items-center gap-3">
-              <Avatar className="h-10 w-10">
-                <AvatarImage src={`https://avatar.vercel.sh/${user.email}.png`} alt={user.name} />
-                <AvatarFallback>{user.name?.[0]?.toUpperCase()}</AvatarFallback>
-              </Avatar>
-              <div>
-                <p className="font-semibold text-sm">{user.name}</p>
-                <p className="text-xs text-muted-foreground">{user.role}</p>
-              </div>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
-        
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.title}>
-              <Link href={item.href}>
-                <SidebarMenuButton
-                  variant="ghost"
-                  className={cn(
-                    "w-full justify-start",
-                    pathname === item.href ? "bg-primary/10 text-primary font-semibold" : "hover:bg-muted"
-                  )}
-                  isActive={pathname === item.href}
-                  tooltip={{ content: item.title, side: 'right' }}
-                >
-                  <item.icon className="mr-2 h-5 w-5" />
-                  <span>{item.title}</span>
-                </SidebarMenuButton>
-              </Link>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
-      </SidebarContent>
+  // This UI will not be rendered as SidebarNav is removed from layout.tsx
+  // However, keeping the structure for `getNavItems` to be importable.
+  if (!user) return null;
 
-      <Separator className="my-2" />
-      
-      <SidebarFooter className="p-4">
-        <Button variant="ghost" className="w-full justify-start" onClick={onLogout}>
-          <LogOut className="mr-2 h-5 w-5" />
-          <span>Logout</span>
-        </Button>
-      </SidebarFooter>
-    </Sidebar>
+  return (
+    <div className="hidden lg:block border-r bg-muted/40 p-4">
+      <nav className="grid items-start gap-2 text-sm font-medium">
+        <Link
+          href="/dashboard"
+          className="flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+        >
+          <AppIcon className="h-6 w-6" />
+          ChainWatch
+        </Link>
+        {navItems.map((item) => (
+          <Link
+            key={item.title}
+            href={item.href}
+            className={cn(
+              "flex items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary",
+              pathname === item.href && "bg-muted text-primary"
+            )}
+          >
+            <item.icon className="h-4 w-4" />
+            {item.title}
+          </Link>
+        ))}
+      </nav>
+      <div className="mt-auto p-4">
+        <button
+          onClick={onLogout}
+          className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-muted-foreground transition-all hover:text-primary"
+        >
+          <LogOut className="h-4 w-4" />
+          Logout
+        </button>
+      </div>
+    </div>
   );
 }
-
