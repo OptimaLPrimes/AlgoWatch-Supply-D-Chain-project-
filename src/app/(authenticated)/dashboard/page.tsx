@@ -3,9 +3,10 @@
 import * as React from "react";
 import { OverviewCard } from "@/components/dashboard/overview-card";
 import { PageHeader } from "@/components/shared/page-header";
-import { mockDashboardCards, mockBatches, getIconForStatus } from "@/data/mock-data";
+import { mockDashboardCards, getIconForStatus } from "@/data/mock-data";
 import type { User, Batch } from "@/types";
 import { getSimulatedUser } from "@/lib/auth";
+import { useBatchManager } from "@/hooks/use-batch-manager"; // Import the hook
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
@@ -15,23 +16,28 @@ import { ArrowRight } from "lucide-react";
 
 export default function DashboardPage() {
   const [user, setUser] = React.useState<User | null>(null);
+  const { batches } = useBatchManager(); // Use the hook to get all batches
   const [recentBatches, setRecentBatches] = React.useState<Batch[]>([]);
 
   React.useEffect(() => {
     const currentUser = getSimulatedUser();
     setUser(currentUser);
-    // Simulate fetching recent batches
-    setRecentBatches(mockBatches.slice(0, 5));
   }, []);
 
-  const dashboardCards = user ? mockDashboardCards(user.role) : [];
+  React.useEffect(() => {
+    // Update recent batches when the main batches list changes
+    const sortedBatches = [...batches].sort((a, b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime());
+    setRecentBatches(sortedBatches.slice(0, 5));
+  }, [batches]); // Depend on 'batches' from the hook
+
+  const dashboardCardsData = user ? mockDashboardCards(user.role, batches) : [];
 
   return (
     <div className="container mx-auto py-2">
       <PageHeader title="Dashboard Overview" description={`Welcome back, ${user?.name || 'User'}!`} />
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 mb-8">
-        {dashboardCards.map((card) => (
+        {dashboardCardsData.map((card) => (
           <OverviewCard key={card.title} {...card} />
         ))}
       </div>
@@ -56,6 +62,9 @@ export default function DashboardPage() {
                 <TableBody>
                   {recentBatches.map((batch) => {
                     const StatusIcon = getIconForStatus(batch.status);
+                    const lastTimestamp = batch.checkpoints.length > 0 
+                                          ? batch.checkpoints[batch.checkpoints.length -1].timestamp 
+                                          : batch.creationDate;
                     return (
                       <TableRow key={batch.id}>
                         <TableCell className="font-medium">
@@ -70,7 +79,7 @@ export default function DashboardPage() {
                             {batch.status}
                           </Badge>
                         </TableCell>
-                        <TableCell>{new Date(batch.checkpoints[batch.checkpoints.length -1]?.timestamp || batch.creationDate).toLocaleDateString()}</TableCell>
+                        <TableCell>{new Date(lastTimestamp).toLocaleDateString()}</TableCell>
                       </TableRow>
                     );
                   })}

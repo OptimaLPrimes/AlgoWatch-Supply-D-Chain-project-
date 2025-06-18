@@ -18,27 +18,32 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Textarea } from "@/components/ui/textarea"; // Although not used, keep for consistency if added later
 import { useToast } from "@/hooks/use-toast";
 import { QrCodeDisplay } from "./qr-code-display";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { useBatchManager } from "@/hooks/use-batch-manager";
+import type { Batch } from "@/types";
 
 const batchRegistrationSchema = z.object({
-  batchId: z.string().min(3, "Batch ID must be at least 3 characters"),
+  batchId: z.string().min(3, "Batch ID must be at least 3 characters").optional().or(z.literal('')), // Optional for auto-generation
   productName: z.string().min(3, "Product name is required"),
   origin: z.string().min(3, "Origin location is required"),
   destination: z.string().min(3, "Destination location is required"),
   initialGps: z.string().regex(/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/, "Invalid GPS format (e.g., 40.7128, -74.0060)"),
   temperatureLimit: z.coerce.number().min(-100).max(100, "Temperature limit seems incorrect"),
-  attachments: z.any().optional(), // Placeholder for file uploads
+  attachments: z.instanceof(FileList).optional(), // For file input
 });
 
 type BatchRegistrationFormValues = z.infer<typeof batchRegistrationSchema>;
 
 export function BatchRegistrationForm() {
   const { toast } = useToast();
+  const batchManager = useBatchManager();
   const [isLoading, setIsLoading] = React.useState(false);
-  const [generatedQrCode, setGeneratedQrCode] = React.useState<string | null>(null);
+  const [registeredBatch, setRegisteredBatch] = React.useState<Batch | null>(null);
+  const fileInputRef = React.useRef<HTMLInputElement>(null);
+
 
   const form = useForm<BatchRegistrationFormValues>({
     resolver: zodResolver(batchRegistrationSchema),
@@ -49,28 +54,53 @@ export function BatchRegistrationForm() {
       destination: "",
       initialGps: "",
       temperatureLimit: 5,
+      attachments: undefined,
     },
   });
 
   async function onSubmit(values: BatchRegistrationFormValues) {
     setIsLoading(true);
+    setRegisteredBatch(null); 
     // Simulate API call and smart contract interaction
-    await new Promise((resolve) => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
-    console.log("Registering batch:", values);
-    // In a real app, call backend API which triggers smart contract
-    // Then, generate QR code based on batchId or response
+    try {
+      // The attachments field from form values will be a FileList
+      const newBatch = batchManager.addBatch({
+        ...values,
+        batchId: values.batchId || `BATCH${Date.now().toString().slice(-6)}`, // Ensure batchId is a string
+        attachments: values.attachments, // Pass the FileList
+      });
+      setRegisteredBatch(newBatch);
 
-    setGeneratedQrCode(`https://placehold.co/200x200.png?text=QR+${values.batchId}`);
+      toast({
+        title: "Batch Registered Successfully!",
+        description: `Batch ${newBatch.id} for ${newBatch.productName} has been created.`,
+      });
+      
+      form.reset({ // Reset form with a new suggested Batch ID
+        batchId: `BATCH${Date.now().toString().slice(-6)}`,
+        productName: "",
+        origin: "",
+        destination: "",
+        initialGps: "",
+        temperatureLimit: 5,
+        attachments: undefined,
+      });
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""; // Clear file input
+      }
 
-    toast({
-      title: "Batch Registered Successfully!",
-      description: `Batch ${values.batchId} for ${values.productName} has been created.`,
-    });
-    
-    // Optionally reset form or redirect
-    // form.reset(); 
-    setIsLoading(false);
+    } catch (error) {
+      console.error("Error registering batch:", error);
+      toast({
+        variant: "destructive",
+        title: "Registration Failed",
+        description: "An error occurred while registering the batch.",
+      });
+    } finally {
+      setIsLoading(false);
+    }
   }
 
   return (
@@ -93,9 +123,9 @@ export function BatchRegistrationForm() {
                 name="batchId"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Batch ID</FormLabel>
+                    <FormLabel>Batch ID (Optional)</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., BATCHXYZ123" {...field} disabled={isLoading} />
+                      <Input placeholder="Auto-generates if empty" {...field} value={field.value ?? ''} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -177,11 +207,18 @@ export function BatchRegistrationForm() {
             <FormField
               control={form.control}
               name="attachments"
-              render={({ field }) => (
+              render={({ field: { onChange, value, ...restField } }) => (
                 <FormItem>
                   <FormLabel className="flex items-center gap-1"><Upload className="h-4 w-4" />Attach Files (Optional)</FormLabel>
                   <FormControl>
-                    <Input type="file" {...field} disabled={isLoading} multiple />
+                     <Input 
+                        type="file" 
+                        multiple 
+                        disabled={isLoading}
+                        onChange={(e) => onChange(e.target.files)}
+                        ref={fileInputRef}
+                        {...restField}
+                      />
                   </FormControl>
                   <FormDescription>Upload bills, invoices, or product images.</FormDescription>
                   <div className="flex gap-2 mt-1 text-xs text-muted-foreground">
@@ -192,10 +229,10 @@ export function BatchRegistrationForm() {
               )}
             />
 
-            {generatedQrCode && (
+            {registeredBatch && registeredBatch.qrCodeUrl && (
               <div className="mt-6">
-                <h3 className="text-lg font-medium mb-2">Generated QR Code</h3>
-                <QrCodeDisplay qrCodeUrl={generatedQrCode} batchId={form.getValues("batchId")} />
+                <h3 className="text-lg font-medium mb-2">Generated QR Code for {registeredBatch.id}</h3>
+                <QrCodeDisplay qrCodeUrl={registeredBatch.qrCodeUrl} batchId={registeredBatch.id} />
               </div>
             )}
           </CardContent>

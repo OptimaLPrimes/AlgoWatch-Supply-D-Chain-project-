@@ -5,7 +5,7 @@ import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
 import { PlusCircle, Search, Filter, Edit3, Trash2, Eye } from "lucide-react";
-import { mockBatches } from "@/data/mock-data";
+import { useBatchManager } from "@/hooks/use-batch-manager"; // Import the hook
 import type { Batch } from "@/types";
 import { Input } from "@/components/ui/input";
 import {
@@ -28,16 +28,24 @@ import {
 import { MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
-
 export default function BatchManagementPage() {
-  const [batches, setBatches] = React.useState<Batch[]>(mockBatches);
+  const { batches, deleteBatch } = useBatchManager(); // Use the hook
   const [searchTerm, setSearchTerm] = React.useState("");
 
-  const filteredBatches = batches.filter(batch =>
-    batch.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    batch.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    batch.status.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredBatches = React.useMemo(() => 
+    batches.filter(batch =>
+      batch.id.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      batch.productName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      batch.status.toLowerCase().includes(searchTerm.toLowerCase())
+    ).sort((a,b) => new Date(b.creationDate).getTime() - new Date(a.creationDate).getTime()), // Sort by newest first
+    [batches, searchTerm]
   );
+
+  const handleDeleteBatch = (batchId: string) => {
+    if (confirm(`Are you sure you want to delete batch ${batchId}? This action cannot be undone.`)) {
+      deleteBatch(batchId);
+    }
+  };
 
   return (
     <div className="container mx-auto py-2">
@@ -113,17 +121,22 @@ export default function BatchManagementPage() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuItem onClick={() => alert(`Viewing details for ${batch.id}`)}>
-                              <Eye className="mr-2 h-4 w-4" /> View Details
+                            <DropdownMenuItem asChild>
+                               <Link href={`/verify-batch?id=${batch.id}`} className="w-full">
+                                <Eye className="mr-2 h-4 w-4" /> View Details
+                              </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => alert(`Editing ${batch.id}`)}>
+                            <DropdownMenuItem onClick={() => alert(`Editing for ${batch.id} is not yet implemented.`)}>
                               <Edit3 className="mr-2 h-4 w-4" /> Edit Batch
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => alert(`Updating checkpoint for ${batch.id}`)}>
+                            <DropdownMenuItem onClick={() => alert(`Updating checkpoint for ${batch.id} is not yet implemented.`)}>
                               <PlusCircle className="mr-2 h-4 w-4" /> Update Checkpoint
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
-                            <DropdownMenuItem className="text-destructive focus:text-destructive focus:bg-destructive/10" onClick={() => confirm(`Are you sure you want to delete batch ${batch.id}?`)}>
+                            <DropdownMenuItem 
+                              className="text-destructive focus:text-destructive focus:bg-destructive/10" 
+                              onClick={() => handleDeleteBatch(batch.id)}
+                            >
                               <Trash2 className="mr-2 h-4 w-4" /> Delete Batch
                             </DropdownMenuItem>
                           </DropdownMenuContent>
@@ -137,6 +150,9 @@ export default function BatchManagementPage() {
           ) : (
             <div className="text-center py-10">
               <p className="text-muted-foreground">No batches found matching your criteria.</p>
+              {batches.length === 0 && searchTerm === "" && (
+                 <p className="text-sm mt-2">Try <Link href="/batches/register" className="text-primary hover:underline">registering a new batch</Link> to get started.</p>
+              )}
             </div>
           )}
         </CardContent>
