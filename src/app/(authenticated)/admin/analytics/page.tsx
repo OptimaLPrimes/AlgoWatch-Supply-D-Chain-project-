@@ -1,8 +1,70 @@
 
+"use client";
+import * as React from "react";
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart3 } from "lucide-react";
+import { BarChart3, LineChartIcon, PieChartIcon, ListChecks } from "lucide-react";
 import Image from 'next/image';
+import {
+  LineChart,
+  Line,
+  XAxis,
+  YAxis,
+  CartesianGrid,
+  Tooltip as RechartsTooltip,
+  ResponsiveContainer,
+  Legend as RechartsLegend,
+  PieChart,
+  Pie,
+  Cell,
+  BarChart,
+  Bar,
+} from 'recharts';
+import { ChartContainer, ChartTooltipContent, ChartLegend as ShadcnChartLegend, ChartLegendContent } from '@/components/ui/chart';
+
+const temperatureTrendData = [
+  { month: "Jan", avgTemp: 2.1, anomalies: 1 },
+  { month: "Feb", avgTemp: 3.5, anomalies: 0 },
+  { month: "Mar", avgTemp: 6.0, anomalies: 2 },
+  { month: "Apr", avgTemp: 9.5, anomalies: 1 },
+  { month: "May", avgTemp: 14.2, anomalies: 0 },
+  { month: "Jun", avgTemp: 18.5, anomalies: 3 },
+];
+
+const temperatureChartConfig = {
+  avgTemp: {
+    label: "Avg. Temp (°C)",
+    color: "hsl(var(--chart-1))",
+  },
+  anomalies: {
+    label: "Anomalies",
+    color: "hsl(var(--chart-2))",
+  },
+} satisfies Parameters<typeof ChartContainer>[0]["config"];
+
+const batchCompletionData = [
+  { name: 'Completed', value: 450, fill: "hsl(var(--chart-1))" },
+  { name: 'Failed (Temp Breach)', value: 35, fill: "hsl(var(--chart-2))" },
+  { name: 'Failed (Other)', value: 15, fill: "hsl(var(--chart-3))" },
+];
+
+const batchCompletionChartConfig = {
+  value: {
+    label: "Batches",
+  },
+  Completed: {
+    label: "Completed",
+    color: "hsl(var(--chart-1))",
+  },
+  "Failed (Temp Breach)": {
+    label: "Failed (Temp Breach)",
+    color: "hsl(var(--chart-2))",
+  },
+  "Failed (Other)": {
+    label: "Failed (Other)",
+    color: "hsl(var(--chart-3))",
+  }
+} satisfies Parameters<typeof ChartContainer>[0]["config"];
 
 
 export default function AdminAnalyticsPage() {
@@ -19,44 +81,96 @@ export default function AdminAnalyticsPage() {
             Analytics Dashboard
           </CardTitle>
           <CardDescription>
-            This page is a placeholder for system-wide analytics.
-            Visualizations for temperature trends, completed vs. failed batches, and block confirmations will be displayed here.
+            Visualizations for temperature trends, batch completion rates, and an overview of blockchain transactions.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
-          <p className="text-muted-foreground">
-            Detailed charts and graphs will provide a comprehensive overview of supply chain operations.
-          </p>
+        <CardContent className="space-y-8">
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Temperature Trends</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <LineChartIcon className="h-5 w-5 text-primary" />
+                  Monthly Temperature Trends
+                </CardTitle>
+                <CardDescription>Average temperature and reported anomalies per month.</CardDescription>
               </CardHeader>
               <CardContent>
-                <Image src="https://placehold.co/600x300.png/E0E0E0/B0B0B0?text=Temperature+Trend+Chart" alt="Temperature Trend Chart Placeholder" width={600} height={300} className="w-full rounded-md" data-ai-hint="graph chart" />
-                <p className="text-xs text-muted-foreground mt-2 text-center">Placeholder for temperature trend graph.</p>
+                <ChartContainer config={temperatureChartConfig} className="h-[300px] w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={temperatureTrendData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="month" />
+                      <YAxis yAxisId="left" />
+                      <YAxis yAxisId="right" orientation="right" dataKey="anomalies" />
+                      <RechartsTooltip content={<ChartTooltipContent />} />
+                      <ShadcnChartLegend content={<ChartLegendContent />} />
+                      <Line yAxisId="left" type="monotone" dataKey="avgTemp" stroke="var(--color-avgTemp)" strokeWidth={2} name="Avg. Temp (°C)" />
+                      <Line yAxisId="right" type="step" dataKey="anomalies" stroke="var(--color-anomalies)" strokeWidth={2} name="Anomalies" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
+
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg">Batch Completion Rate</CardTitle>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <PieChartIcon className="h-5 w-5 text-primary" />
+                  Batch Completion Rate
+                </CardTitle>
+                 <CardDescription>Distribution of completed vs. failed batches.</CardDescription>
               </CardHeader>
-              <CardContent>
-                <Image src="https://placehold.co/600x300.png/E0E0E0/B0B0B0?text=Batch+Completion+Chart" alt="Batch Completion Chart Placeholder" width={600} height={300} className="w-full rounded-md" data-ai-hint="pie chart" />
-                <p className="text-xs text-muted-foreground mt-2 text-center">Placeholder for completed vs. failed batches chart.</p>
+              <CardContent className="flex justify-center">
+                <ChartContainer config={batchCompletionChartConfig} className="h-[300px] w-[300px] sm:w-[350px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <RechartsTooltip content={<ChartTooltipContent hideLabel />} />
+                      <Pie
+                        data={batchCompletionData}
+                        dataKey="value"
+                        nameKey="name"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        labelLine={false}
+                        label={({ cx, cy, midAngle, innerRadius, outerRadius, percent, index }) => {
+                          const RADIAN = Math.PI / 180;
+                          const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+                          const x = cx + radius * Math.cos(-midAngle * RADIAN);
+                          const y = cy + radius * Math.sin(-midAngle * RADIAN);
+                          return (
+                            <text x={x} y={y} fill="white" textAnchor={x > cx ? 'start' : 'end'} dominantBaseline="central" fontSize="10px">
+                              {`${(percent * 100).toFixed(0)}%`}
+                            </text>
+                          );
+                        }}
+                      >
+                        {batchCompletionData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.fill} />
+                        ))}
+                      </Pie>
+                      <ShadcnChartLegend content={<ChartLegendContent />} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </ChartContainer>
               </CardContent>
             </Card>
           </div>
-           <Card>
-              <CardHeader>
-                <CardTitle className="text-lg">Blockchain Transaction Explorer</CardTitle>
-              </CardHeader>
-              <CardContent>
-                 <Image src="https://placehold.co/600x300.png/E0E0E0/B0B0B0?text=Block+Explorer+View" alt="Block Explorer Placeholder" width={600} height={300} className="w-full rounded-md" data-ai-hint="data list" />
-                <p className="text-xs text-muted-foreground mt-2 text-center">Placeholder for block confirmation explorer.</p>
-              </CardContent>
-            </Card>
+           
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <ListChecks className="h-5 w-5 text-primary" />
+                Blockchain Transaction Explorer
+              </CardTitle>
+              <CardDescription>Overview of recent blockchain interactions (conceptual).</CardDescription>
+            </CardHeader>
+            <CardContent>
+                 <Image src="https://placehold.co/800x300.png/E0E0E0/B0B0B0?text=Conceptual+Block+Explorer+View" alt="Block Explorer Placeholder" width={800} height={300} className="w-full rounded-md" data-ai-hint="data list table" />
+                <p className="text-xs text-muted-foreground mt-2 text-center">Placeholder: A full block explorer is a complex feature. This represents a conceptual view of transaction data.</p>
+            </CardContent>
+          </Card>
 
         </CardContent>
       </Card>
