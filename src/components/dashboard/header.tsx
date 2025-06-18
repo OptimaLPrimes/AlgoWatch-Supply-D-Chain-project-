@@ -5,7 +5,7 @@ import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { User, NavItem } from "@/types";
-import { Bell, Moon, Sun, Package as AppIcon, Menu } from "lucide-react";
+import { Bell, Moon, Sun, Package as AppIcon, Menu, UserCircle, Settings, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -97,12 +97,10 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
                             </div>
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); /* router.push('/profile') */ alert("Profile page not implemented"); }}>Profile</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); /* router.push('/settings') */ alert("Settings page not implemented"); }}>Settings</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); alert("Profile page not implemented"); }}><UserCircle />Profile</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); alert("Settings page not implemented"); }}><Settings />Settings</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); onLogout();}}>
-                            Log out
-                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => { setMobileMenuOpen(false); onLogout();}}><LogOut />Log out</DropdownMenuItem>
                         </DropdownMenuContent>
                     </DropdownMenu>
                 </div>
@@ -141,8 +139,8 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
             <DropdownMenuContent align="end">
               {navItems.slice(4).map((item) => (
                 <DropdownMenuItem key={item.title} asChild>
-                  <Link href={item.href} className={cn(pathname === item.href && "bg-muted")}>
-                    <item.icon className="mr-2 h-4 w-4" />
+                  <Link href={item.href} className={cn("flex items-center gap-2", pathname === item.href && "bg-muted")}> {/* Added flex items-center gap-2 */}
+                    <item.icon /> {/* Icon will be sized by DropdownMenuItem's CSS */}
                     {item.title}
                   </Link>
                 </DropdownMenuItem>
@@ -182,12 +180,10 @@ export function DashboardHeader({ user, onLogout }: DashboardHeaderProps) {
                   </div>
                 </DropdownMenuLabel>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem>Profile</DropdownMenuItem>
-                <DropdownMenuItem>Settings</DropdownMenuItem>
+                <DropdownMenuItem><UserCircle />Profile</DropdownMenuItem>
+                <DropdownMenuItem><Settings />Settings</DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={onLogout}>
-                  Log out
-                </DropdownMenuItem>
+                <DropdownMenuItem onClick={onLogout}><LogOut />Log out</DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           </div>

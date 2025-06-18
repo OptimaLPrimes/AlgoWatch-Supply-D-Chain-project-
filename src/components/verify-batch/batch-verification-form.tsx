@@ -75,10 +75,10 @@ export function BatchVerificationForm({ onVerify, initialBatchId, isLoading }: B
         <div className="flex gap-2 w-full sm:w-auto">
           <Button type="submit" size="lg" className="flex-grow sm:flex-grow-0" disabled={isLoading}>
             {isLoading ? 'Verifying...' : 'Verify Batch'}
-            {!isLoading && <Search className="ml-2 h-5 w-5" />}
+            {!isLoading && <Search />}
           </Button>
           <Button type="button" variant="outline" size="lg" className="flex-grow sm:flex-grow-0" disabled={isLoading} onClick={() => alert("QR Scanner not implemented yet.")}>
-            <QrCode className="mr-2 h-5 w-5" />
+            <QrCode />
             Scan QR
           </Button>
         </div>

@@ -10,6 +10,7 @@ import { getSimulatedUser, simulateLogout } from "@/lib/auth";
 import type { User } from "@/types";
 import { Toaster } from "@/components/ui/toaster";
 import { AppFooter } from "@/components/layout/app-footer";
+import { Loader2 } from "lucide-react";
 
 export default function AuthenticatedLayout({
   children,
@@ -39,7 +40,7 @@ export default function AuthenticatedLayout({
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <div className="h-16 w-16 animate-spin rounded-full border-4 border-solid border-primary border-t-transparent"></div>
+        <Loader2 className="h-16 w-16 animate-spin text-primary" />
       </div>
     );
   }

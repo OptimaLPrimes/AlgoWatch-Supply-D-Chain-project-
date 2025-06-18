@@ -33,7 +33,7 @@ export function QrCodeDisplay({ qrCodeUrl, batchId }: QrCodeDisplayProps) {
       />
       <p className="mt-2 text-sm text-muted-foreground">Batch ID: {batchId}</p>
       <Button onClick={handleDownload} variant="outline" size="sm" className="mt-3">
-        <Download className="mr-2 h-4 w-4" />
+        <Download />
         Download QR Code
       </Button>
     </div>

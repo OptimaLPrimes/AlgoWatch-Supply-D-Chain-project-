@@ -4,7 +4,7 @@ import * as React from "react";
 import Link from "next/link";
 import { PageHeader } from "@/components/shared/page-header";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, Search, Filter, Edit3, Trash2, Eye } from "lucide-react";
+import { PlusCircle, Search, Filter, Edit3, Trash2, Eye, MoreHorizontal } from "lucide-react";
 import { useBatchManager } from "@/hooks/use-batch-manager"; // Import the hook
 import type { Batch } from "@/types";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,6 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { MoreHorizontal } from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 
 export default function BatchManagementPage() {
@@ -52,7 +51,7 @@ export default function BatchManagementPage() {
       <PageHeader title="Batch Management" description="Oversee and manage all supply chain batches.">
         <Button asChild>
           <Link href="/batches/register">
-            <PlusCircle className="mr-2 h-4 w-4" /> Register New Batch
+            <PlusCircle /> Register New Batch
           </Link>
         </Button>
       </PageHeader>
@@ -75,7 +74,7 @@ export default function BatchManagementPage() {
               />
             </div>
             <Button variant="outline">
-              <Filter className="mr-2 h-4 w-4" /> Filter
+              <Filter /> Filter
             </Button>
           </div>
         </CardHeader>
@@ -122,22 +121,22 @@ export default function BatchManagementPage() {
                           <DropdownMenuContent align="end">
                             <DropdownMenuLabel>Actions</DropdownMenuLabel>
                             <DropdownMenuItem asChild>
-                               <Link href={`/verify-batch?id=${batch.id}`} className="w-full">
-                                <Eye className="mr-2 h-4 w-4" /> View Details
+                               <Link href={`/verify-batch?id=${batch.id}`} className="w-full flex items-center gap-2"> {/* Added flex items-center gap-2 for Link content */}
+                                <Eye /> View Details
                               </Link>
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => alert(`Editing for ${batch.id} is not yet implemented.`)}>
-                              <Edit3 className="mr-2 h-4 w-4" /> Edit Batch
+                              <Edit3 /> Edit Batch
                             </DropdownMenuItem>
                             <DropdownMenuItem onClick={() => alert(`Updating checkpoint for ${batch.id} is not yet implemented.`)}>
-                              <PlusCircle className="mr-2 h-4 w-4" /> Update Checkpoint
+                              <PlusCircle /> Update Checkpoint
                             </DropdownMenuItem>
                             <DropdownMenuSeparator />
                             <DropdownMenuItem 
                               className="text-destructive focus:text-destructive focus:bg-destructive/10" 
                               onClick={() => handleDeleteBatch(batch.id)}
                             >
-                              <Trash2 className="mr-2 h-4 w-4" /> Delete Batch
+                              <Trash2 /> Delete Batch
                             </DropdownMenuItem>
                           </DropdownMenuContent>
                         </DropdownMenu>

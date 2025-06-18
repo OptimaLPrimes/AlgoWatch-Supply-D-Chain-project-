@@ -1,7 +1,7 @@
 
 import { PageHeader } from "@/components/shared/page-header";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Users, UserPlus, Search } from "lucide-react";
+import { Users, UserPlus, Search, Edit3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
@@ -25,7 +25,7 @@ export default function AdminUserManagementPage() {
         description="Administer user accounts, roles, and permissions."
       >
          <Button>
-            <UserPlus className="mr-2 h-4 w-4" /> Add New User
+            <UserPlus /> Add New User
           </Button>
       </PageHeader>
       <Card className="shadow-xl">
@@ -75,7 +75,7 @@ export default function AdminUserManagementPage() {
                     </TableCell>
                     <TableCell>{user.joinedDate}</TableCell>
                     <TableCell className="text-right">
-                       <Button variant="ghost" size="sm">Edit</Button>
+                       <Button variant="ghost" size="sm"><Edit3 /> Edit</Button>
                     </TableCell>
                   </TableRow>
                 ))}

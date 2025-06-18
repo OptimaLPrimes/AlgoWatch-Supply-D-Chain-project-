@@ -239,7 +239,7 @@ export function BatchRegistrationForm() {
           <CardFooter>
             <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
               {isLoading ? "Registering..." : "Register Batch & Generate QR"}
-              {!isLoading && <PackagePlus className="ml-2 h-4 w-4" />}
+              {!isLoading && <PackagePlus />}
             </Button>
           </CardFooter>
         </form>

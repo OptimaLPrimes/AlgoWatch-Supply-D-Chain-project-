@@ -12,7 +12,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, PackagePlus, SearchCheck, AlertTriangle, BarChart3 } from "lucide-react";
 
 export default function DashboardPage() {
   const [user, setUser] = React.useState<User | null>(null);
@@ -90,7 +90,7 @@ export default function DashboardPage() {
             )}
             <div className="mt-4 flex justify-end">
               <Button variant="link" asChild>
-                <Link href="/batches">View All Batches <ArrowRight className="ml-2 h-4 w-4" /></Link>
+                <Link href="/batches">View All Batches <ArrowRight /></Link>
               </Button>
             </div>
           </CardContent>
@@ -103,16 +103,16 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Button asChild size="lg" className="w-full">
-              <Link href="/batches/register">Register New Batch</Link>
+              <Link href="/batches/register" className="flex items-center justify-center gap-2"><PackagePlus />Register New Batch</Link>
             </Button>
             <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/verify-batch">Verify a Batch</Link>
+              <Link href="/verify-batch" className="flex items-center justify-center gap-2"><SearchCheck />Verify a Batch</Link>
             </Button>
              <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/alerts">View Alerts</Link>
+              <Link href="/alerts" className="flex items-center justify-center gap-2"><AlertTriangle />View Alerts</Link>
             </Button>
              <Button asChild variant="outline" size="lg" className="w-full">
-              <Link href="/admin/analytics">System Analytics</Link>
+              <Link href="/admin/analytics" className="flex items-center justify-center gap-2"><BarChart3 />System Analytics</Link>
             </Button>
           </CardContent>
         </Card>

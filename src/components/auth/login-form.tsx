@@ -157,7 +157,7 @@ export function LoginForm() {
             />
             <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading ? "Signing In..." : "Sign In"}
-              {!isLoading && <LogIn className="ml-2 h-4 w-4" />}
+              {!isLoading && <LogIn />}
             </Button>
           </form>
         </Form>

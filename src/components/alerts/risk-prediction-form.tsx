@@ -125,7 +125,7 @@ export function RiskPredictionForm() {
             <CardFooter>
               <Button type="submit" className="w-full md:w-auto" disabled={isLoading}>
                 {isLoading ? "Analyzing..." : "Predict Risks"}
-                {!isLoading && <Sparkles className="ml-2 h-4 w-4" />}
+                {!isLoading && <Sparkles />}
               </Button>
             </CardFooter>
           </form>

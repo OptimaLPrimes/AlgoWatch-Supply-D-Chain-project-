@@ -1,7 +1,7 @@
 
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Package, AlertTriangle } from 'lucide-react';
+import { Package, AlertTriangle, LogIn, LayoutDashboard } from 'lucide-react';
 
 export default function NotFound() {
   return (
@@ -18,13 +18,12 @@ export default function NotFound() {
       <div className="flex items-center space-x-4">
          <Link href="/">
           <Button size="lg">
-            <Package className="mr-2 h-5 w-5" />
-            Go to Login
+            <LogIn />Go to Login
           </Button>
         </Link>
         <Link href="/dashboard">
           <Button variant="outline" size="lg">
-            Go to Dashboard
+            <LayoutDashboard />Go to Dashboard
           </Button>
         </Link>
       </div>
