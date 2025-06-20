@@ -61,12 +61,10 @@ export function BatchRegistrationForm() {
   async function onSubmit(values: BatchRegistrationFormValues) {
     setIsLoading(true);
     setRegisteredBatch(null); 
-    // Simulate API call and smart contract interaction
-    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     try {
       // The attachments field from form values will be a FileList
-      const newBatch = batchManager.addBatch({
+      const newBatch = await batchManager.addBatch({
         ...values,
         batchId: values.batchId || `BATCH${Date.now().toString().slice(-6)}`, // Ensure batchId is a string
         attachments: values.attachments, // Pass the FileList

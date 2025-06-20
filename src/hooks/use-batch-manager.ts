@@ -4,6 +4,7 @@
 import * as React from "react";
 import type { Batch, FileAttachment } from "@/types";
 import { mockBatches as initialMockBatches } from "@/data/mock-data";
+import qrcode from "qrcode";
 
 const LOCAL_STORAGE_KEY = "chainwatch_batches";
 
@@ -53,9 +54,12 @@ export function useBatchManager() {
 
   // Removed useEffect for initial loading as it's now handled by useState initializer
 
-  const addBatch = React.useCallback((formData: BatchRegistrationFormValues) => {
+  const addBatch = React.useCallback(async (formData: BatchRegistrationFormValues) => {
     const newBatchId = formData.batchId || `BATCH${Date.now().toString().slice(-6)}`;
     
+    const verificationUrl = `/verify-batch?id=${newBatchId}`;
+    const qrCodeDataUrl = await qrcode.toDataURL(verificationUrl);
+
     const processedAttachments: FileAttachment[] = [];
     if (formData.attachments) {
       if (formData.attachments instanceof FileList) {
@@ -83,7 +87,7 @@ export function useBatchManager() {
       creationDate: new Date().toISOString(),
       status: "Registered",
       currentLocationGps: formData.initialGps,
-      qrCodeUrl: `https://placehold.co/150x150.png/E0E0E0/B0B0B0?text=QR+${newBatchId.substring(0,10)}`,
+      qrCodeUrl: qrCodeDataUrl,
       attachments: processedAttachments,
       checkpoints: [
         {
