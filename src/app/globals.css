@@ -4,73 +4,119 @@
 
 @layer base {
   :root {
-    --background: 240 10% 96.1%; /* Light grey #F0F0F0 */
-    --foreground: 240 6% 10%;
+    /* --------------------------------
+       BASE COLORS – Used for dApp UI background and typography
+       Algorand Use Case: Light UI for transaction lists, explorer views
+    -------------------------------- */
+    --background: 240 10% 96.1%;         /* Light grey #F0F0F0 - Dashboard BG */
+    --foreground: 240 6% 10%;            /* Near-black text for readability */
+
     --card: 0 0% 100%;
     --card-foreground: 240 6% 10%;
+
     --popover: 0 0% 100%;
     --popover-foreground: 240 6% 10%;
-    --primary: 197 71% 52%; /* Strong Blue #29ABE2 */
+
+    /* --------------------------------
+       PRIMARY BRAND COLORS – Algorand Blue-inspired theme
+       Used in buttons, highlights, links, and charts
+    -------------------------------- */
+    --primary: 197 71% 52%;              /* Blue #29ABE2 - Resembles AlgoExplorer branding */
     --primary-foreground: 0 0% 100%;
+
+    /* Secondary and Accent - For minor actions, tags, notifications */
     --secondary: 240 5% 90%;
     --secondary-foreground: 240 6% 10%;
+
+    --accent: 28 100% 50%;               /* Deep Orange #FF8C00 - Action accent */
+    --accent-foreground: 0 0% 100%;
+
     --muted: 240 5% 90%;
     --muted-foreground: 240 4% 46%;
-    --accent: 28 100% 50%; /* Deep Orange #FF8C00 */
-    --accent-foreground: 0 0% 100%;
-    --destructive: 0 84% 60%;
+
+    --destructive: 0 84% 60%;            /* Red for failed transactions/errors */
     --destructive-foreground: 0 0% 100%;
+
+    /* --------------------------------
+       UI ELEMENTS – Border, input, ring for forms & modal UIs
+       Algorand Use Case: Asset transfer forms, wallet login fields
+    -------------------------------- */
     --border: 240 6% 80%;
     --input: 240 6% 85%;
-    --ring: 197 71% 52%; /* Strong Blue for ring */
+    --ring: 197 71% 52%;                 /* Focus outline with primary blue */
+
+    /* --------------------------------
+       CHART COLORS – Used in analytics panels (e.g. block metrics, tx types)
+    -------------------------------- */
     --chart-1: 197 71% 52%;
     --chart-2: 28 100% 50%;
     --chart-3: 120 60% 45%;
     --chart-4: 40 80% 55%;
     --chart-5: 280 70% 60%;
+
+    /* --------------------------------
+       RADIUS – For cards, modals, and buttons
+    -------------------------------- */
     --radius: 0.5rem;
 
-    --sidebar-background: 240 5% 98%; /* Slightly off-white for sidebar */
+    /* --------------------------------
+       SIDEBAR COLORS – Navigation panel for wallet/dashboard interface
+       Algorand Use Case: Navigation for ASA explorer, smart contract IDEs
+    -------------------------------- */
+    --sidebar-background: 240 5% 98%;
     --sidebar-foreground: 240 6% 20%;
     --sidebar-primary: 197 71% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 197 71% 45%; /* Darker blue for sidebar accent */
+    --sidebar-accent: 197 71% 45%;       /* Slightly darker for active nav items */
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 6% 85%;
     --sidebar-ring: 197 71% 52%;
   }
 
   .dark {
+    /* --------------------------------
+       DARK MODE – Optimized for low-light environments
+       Common in developer tools and crypto dashboards
+    -------------------------------- */
     --background: 240 6% 10%;
     --foreground: 0 0% 98%;
+
     --card: 240 6% 12%;
     --card-foreground: 0 0% 98%;
+
     --popover: 240 6% 12%;
     --popover-foreground: 0 0% 98%;
-    --primary: 197 71% 52%; /* Strong Blue #29ABE2 */
+
+    --primary: 197 71% 52%;
     --primary-foreground: 0 0% 100%;
+
     --secondary: 240 4% 20%;
     --secondary-foreground: 0 0% 98%;
+
+    --accent: 28 100% 50%;
+    --accent-foreground: 0 0% 100%;
+
     --muted: 240 4% 20%;
     --muted-foreground: 0 0% 60%;
-    --accent: 28 100% 50%; /* Deep Orange #FF8C00 */
-    --accent-foreground: 0 0% 100%;
+
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
+
     --border: 240 4% 25%;
     --input: 240 4% 25%;
     --ring: 197 71% 52%;
+
     --chart-1: 197 71% 52%;
     --chart-2: 28 100% 50%;
     --chart-3: 120 60% 45%;
     --chart-4: 40 80% 55%;
     --chart-5: 280 70% 60%;
 
-    --sidebar-background: 240 6% 8%; 
+    --sidebar-background: 240 6% 8%;
     --sidebar-foreground: 0 0% 95%;
     --sidebar-primary: 197 71% 52%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 197 71% 45%; 
+    --sidebar-accent: 197 71% 45%;
     --sidebar-accent-foreground: 0 0% 100%;
     --sidebar-border: 240 4% 20%;
     --sidebar-ring: 197 71% 52%;
@@ -78,12 +124,25 @@
 }
 
 @layer base {
+  /* --------------------------------
+     Apply border color globally for UI consistency
+     Helps define components like block cards, address tables
+  -------------------------------- */
   * {
     @apply border-border;
   }
+
+  /* --------------------------------
+     Base body styling
+     Used across wallets, explorers, smart contract interfaces
+  -------------------------------- */
   body {
     @apply bg-background text-foreground font-body;
   }
+
+  /* --------------------------------
+     Typography for headings – page titles, module headers
+  -------------------------------- */
   h1, h2, h3, h4, h5, h6 {
     @apply font-headline;
   }
