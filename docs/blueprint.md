@@ -1,4 +1,4 @@
-ChainWatch – Cold Chain Monitoring on Algorand
+AlgoWatch – Cold Chain Monitoring on Algorand
 
 ChainWatch is a blockchain-based cold chain logistics monitoring platform powered by Algorand. It provides real-time, role-based batch tracking, AI-driven risk prediction, and decentralized verification of temperature-sensitive shipments using the reliability and security of the Algorand blockchain.
 
@@ -66,6 +66,15 @@ Subtle, continuous animations for temperature changes and vehicle movement
 Frontend: React.js, React Leaflet, Web3Modal (Wallet Connect)
 
 Backend: Node.js, Express.js, MongoDB
+✅ Summary of Algorand Features Utilized
+Component	Algorand Feature
+Batch Representation	ASA (Algorand Standard Assets)
+Smart Contract Logic	ASC1 (Stateful & Stateless TEAL)
+Workflow Automation	AVM (Algorand Virtual Machine)
+Role Access Control	Rekeying, Smart Contract Gating
+Data Integrity	On-chain Hashes + IPFS
+Real-Time Data	Indexer, Webhooks
+Wallet Support	MyAlgo, Pera, WalletConnect
 
 Blockchain: Algorand, ASC1, AlgoSigner/WalletConnect
 
