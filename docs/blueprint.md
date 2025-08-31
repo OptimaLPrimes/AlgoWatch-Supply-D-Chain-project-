@@ -1,21 +1,74 @@
-# **App Name**: ChainWatch
+ChainWatch – Cold Chain Monitoring on Algorand
 
-## Core Features:
+ChainWatch is a blockchain-based cold chain logistics monitoring platform powered by Algorand. It provides real-time, role-based batch tracking, AI-driven risk prediction, and decentralized verification of temperature-sensitive shipments using the reliability and security of the Algorand blockchain.
 
-- Role-Based Authentication: User authentication and authorization supporting roles like Admin, Manufacturer, Distributor, Retailer, Inspector, and Customer.
-- Dashboard Overview: A dashboard displaying batches handled, delivery status, and live alerts for each role.
-- Batch Management: Functionality to register new batches with details like ID, product, origin, GPS, temperature limit, and file attachments (bill/invoice/image). Also automatically generates QR codes for each registered batch.
-- Batch Verification: Verification page to show the status, map, checkpoints, and temperature log for a scanned or entered batch ID.
-- Map Tracking: Map tracker using React Leaflet, displaying a live marker for the delivery vehicle, custom icons for checkpoints, a route with polyline, and real-time GPS/temperature simulation.
-- Real-time Cold Chain Alerts: Visual warnings if the temperature exceeds the defined threshold, and simulated IoT temperature sensor data for live updates.
-- AI-Driven Risk Prediction: AI tool that analyzes historical batch data to detect risky batches and predict potential temperature breaches.
+🚀 Core Features
 
-## Style Guidelines:
+🔐 Role-Based Authentication
+Secure login with role-specific permissions: Admin, Manufacturer, Distributor, Retailer, Inspector, and Customer.
 
-- Primary color: Strong Blue (#29ABE2) to communicate trust and reliability.
-- Background color: Light grey (#F0F0F0) for a clean and modern look.
-- Accent color: Deep Orange (#FF8C00) for highlighting alerts and calls to action.
-- Headline font: 'Space Grotesk', sans-serif, for a modern, computerized feel.
-- Body font: 'Inter', sans-serif, for neutral, readable text.
-- Use clear, easily recognizable icons to represent batch status, checkpoints, and alerts.
-- Subtle animations to indicate real-time updates, temperature fluctuations, and delivery vehicle movements.
+📊 Dashboard Overview
+Role-specific dashboards showing batch summaries, delivery statuses, and live alerts.
+
+📦 Batch Management with Algorand
+Register and anchor batch metadata (ID, product, origin, GPS, temperature threshold, and attachments like invoices/images) on the Algorand blockchain for tamper-proof verification.
+QR code is auto-generated for each batch.
+
+✅ Batch Verification (On-Chain)
+Scan or enter a batch ID to retrieve verified on-chain data:
+
+Status
+
+GPS path
+
+Checkpoints
+
+Temperature logs (IoT simulated)
+
+Blockchain hash for audit trail
+
+🗺️ Map Tracking (React Leaflet)
+Real-time map visualizations:
+
+Live vehicle tracking
+
+Custom icons for checkpoints
+
+Polyline for delivery route
+
+Simulated GPS and temperature sensor data
+
+🌡️ Cold Chain Alerts (Real-Time)
+Visual indicators when temperature crosses threshold using live simulated data. Alerts are logged both in the system and on-chain for transparency.
+
+🧠 AI-Driven Risk Prediction
+Historical data is analyzed using AI to flag high-risk batches and predict temperature breach points before they happen.
+
+🌐 Blockchain Layer: Algorand Integration
+
+All critical batch data (hashes, timestamps, temp thresholds, GPS checkpoints) are recorded on Algorand to ensure transparency and immutability.
+
+Integrates Algorand Smart Contracts (ASC1) to validate batch integrity and access control.
+
+Utilizes Algorand JavaScript SDK for seamless web integration and wallet interaction.
+
+🎨 UI Style Guidelines
+Primary color: #29ABE2 (Trustworthy Blue)
+Background: #F0F0F0 (Light Grey)
+Accent/Alert: #FF8C00 (Deep Orange)
+Fonts:
+Headlines: 'Space Grotesk', sans-serif
+Body: 'Inter', sans-serif
+Icons & Animations:
+Recognizable icons for statuses, alerts, and checkpoints
+Subtle, continuous animations for temperature changes and vehicle movement
+🛠️ Tech Stack
+Frontend: React.js, React Leaflet, Web3Modal (Wallet Connect)
+
+Backend: Node.js, Express.js, MongoDB
+
+Blockchain: Algorand, ASC1, AlgoSigner/WalletConnect
+
+AI: TensorFlow.js / Scikit-learn (for risk prediction)
+
+IoT Simulation: Custom temperature + GPS data stream
